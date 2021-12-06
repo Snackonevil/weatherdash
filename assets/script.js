@@ -8,31 +8,51 @@
 
 // Icon Source http://openweathermap.org/img/wn/10d@2x.png
 
-// unix to UTC conversion
-// const unixTimestamp = 1575909015
-// const milliseconds = 1575909015 * 1000 // 1575909015000
-// const dateObject = new Date(milliseconds)
-// const humanDateFormat = dateObject.toLocaleString() //2019-12-9 10:30:15
-
 var searchInput = $("#searchInput");
 const searchBtn = $("#searchBtn");
 const mainContent = $("#mainContent");
 var recentSearches = $("#recents");
+const current = $("#current");
+const fiveDay = $("#five-day");
 
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "19f6c11012fcd19bbfc2f0188a37308e";
-var city = "atlanta";
 
 let writeData = data => {
     var currTemp = data.current;
     console.log(currTemp);
+    current.html(`
+    <h3>Temperature: ${Math.floor(currTemp.temp)} | Feels like: ${Math.floor(
+        currTemp.feels_like
+    )}</h3>
+    <h3>${
+        currTemp.weather[0].description
+    }</h3> <img src="http://openweathermap.org/img/wn/${
+        currTemp.weather[0].icon
+    }@4x.png" />`);
+
+    var output = "";
     for (let i = 0; i < 5; i++) {
         var day = data.daily;
-        console.log(day[i].temp);
+        var temp = Math.floor(day[i].temp.max);
+        var weatherInfo = day[i].weather[0];
+        var unixMillisec = day[i].dt * 1000;
+        var dateObject = new Date(unixMillisec);
+        var date = dateObject.toLocaleString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+        });
+
+        output += `<div class="col-12 p-1 m-1 border rounded"><h4>${date}</h4>${temp}<img src="http://openweathermap.org/img/wn/${weatherInfo.icon}.png" /><p>${weatherInfo.description}</div>`;
+        console.log(day[i].temp.max);
     }
+    fiveDay.html(output);
     console.log(data);
 };
-
+{
+    /* <img src="http://openweathermap.org/img/wn/${currTemp.weather[0].icon}.png /> */
+}
 // let fetchFromZip = (zip) => {
 //   fetch(`${apiRootUrl}geo/1.0/zip?zip=${zip}&appid=${apiKey}`)
 //     .then((response) => {
@@ -89,3 +109,12 @@ searchBtn.click(e => {
     var city = searchInput.val().replace(" ", "+");
     fetchCoords(city);
 });
+
+// dateObject.toLocaleString("en-US", {weekday: "long", month: "long", day: "numeric"}) // Monday
+// dateObject.toLocaleString("en-US", {month: "long"}) // December
+// dateObject.toLocaleString("en-US", {day: "numeric"}) // 9
+// dateObject.toLocaleString("en-US", {year: "numeric"}) // 2019
+// dateObject.toLocaleString("en-US", {hour: "numeric"}) // 10 AM
+// dateObject.toLocaleString("en-US", {minute: "numeric"}) // 30
+// dateObject.toLocaleString("en-US", {second: "numeric"}) // 15
+// dateObject.toLocaleString("en-US", {timeZoneName: "short"}) // 12/9/2019, 10:30:15 AM CST
