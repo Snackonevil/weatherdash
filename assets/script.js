@@ -1,13 +1,3 @@
-// Geocode http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-
-// Geocode by Zip http://api.openweathermap.org/geo/1.0/zip?zip={zip code},{country code}&appid={API key}
-
-// One Call https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
-
-// 5day 3 hour forecast data/2.5/forecast?q={city name}&appid=
-
-// Icon Source http://openweathermap.org/img/wn/10d@2x.png
-
 // Selectors
 var searchInput = $("#searchInput");
 const searchBtn = $("#searchBtn");
@@ -19,7 +9,7 @@ const clearBtn = $("#clearBtn");
 
 // Global Variables
 const apiRootUrl = "https://api.openweathermap.org/";
-const apiKey = "19f6c11012fcd19bbfc2f0188a37308e";
+const apiKey = "9eae40a4431a1836c424f06650dd3e9d";
 var searchHistory = [];
 
 let handleHistory = city => {
@@ -86,22 +76,6 @@ let writeData = data => {
     fiveDay.html(output);
     console.log(data);
 };
-{
-    /* <img src="http://openweathermap.org/img/wn/${curr.weather[0].icon}.png /> */
-}
-// let fetchFromZip = (zip) => {
-//   fetch(`${apiRootUrl}geo/1.0/zip?zip=${zip}&appid=${apiKey}`)
-//     .then((response) => {
-//       return response.json();
-//     })
-//     .then((data) => {
-//       console.log(data);
-//       fetchWeather(data.city.coord);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//     });
-// };
 
 // OneCall Weather
 let fetchWeather = coordObj => {
@@ -154,12 +128,6 @@ searchBtn.click(e => {
         return;
     }
     e.preventDefault();
-    //   console.log(typeof searchInput.val());
-    //   if (typeof searchInput.val() == "number") {
-    //     var zip = searchInput.val();
-    //     fetchFromZip(zip);
-    //   } else {
-    // console.log(searchInput.val());
     var city = searchInput.val().replace(" ", "+");
     fetchCoords(city);
 
@@ -180,11 +148,3 @@ clearBtn.click(e => {
 });
 
 loadHistory();
-// dateObject.toLocaleString("en-US", {weekday: "long", month: "long", day: "numeric"}) // Monday
-// dateObject.toLocaleString("en-US", {month: "long"}) // December
-// dateObject.toLocaleString("en-US", {day: "numeric"}) // 9
-// dateObject.toLocaleString("en-US", {year: "numeric"}) // 2019
-// dateObject.toLocaleString("en-US", {hour: "numeric"}) // 10 AM
-// dateObject.toLocaleString("en-US", {minute: "numeric"}) // 30
-// dateObject.toLocaleString("en-US", {second: "numeric"}) // 15
-// dateObject.toLocaleString("en-US", {timeZoneName: "short"}) // 12/9/2019, 10:30:15 AM CST
