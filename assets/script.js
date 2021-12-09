@@ -109,6 +109,9 @@ let fetchWeather = coordObj => {
         `${apiRootUrl}data/2.5/onecall?lat=${coordObj.lat}&lon=${coordObj.lon}&exclude=hourly,minutely&units=imperial&appid=${apiKey}`
     )
         .then(response => {
+            if (!response.ok) {
+                return;
+            }
             return response.json();
         })
         .then(data => {
@@ -123,6 +126,14 @@ let fetchWeather = coordObj => {
 let fetchCoords = city => {
     fetch(`${apiRootUrl}data/2.5/forecast?q=${city}&appid=${apiKey}`)
         .then(response => {
+            if (response.status === 404) {
+                $("#mainContent section h1").text(`${city} not found`);
+                return;
+            } else if (response.status === 429) {
+                $("#mainContent section h1").text(
+                    "Too many API requests. Please Wait"
+                );
+            }
             return response.json();
         })
         .then(data => {
@@ -131,6 +142,7 @@ let fetchCoords = city => {
                 `Today in ${data.city.name}, ${data.city.country}`
             );
             fetchWeather(data.city.coord);
+            handleHistory(city.replace("+", " "));
         })
         .catch(err => {
             console.log(err);
@@ -150,7 +162,7 @@ searchBtn.click(e => {
     // console.log(searchInput.val());
     var city = searchInput.val().replace(" ", "+");
     fetchCoords(city);
-    handleHistory(city.replace("+", " "));
+
     searchInput.val("");
 });
 
