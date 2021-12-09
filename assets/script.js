@@ -20,17 +20,24 @@ const clearBtn = $("#clearBtn");
 // Global Variables
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "19f6c11012fcd19bbfc2f0188a37308e";
-// var searchHistory = ["atlanta", "san diego", "virginia beach"];
+var searchHistory = [];
 
 let handleHistory = city => {
     var searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
-        return;
+        searchHistory = [city];
+        localStorage.setItem("history", JSON.stringify(searchHistory));
+        loadHistory();
+    } else if (searchHistory.indexOf(city) === -1) {
+        searchHistory.unshift(city);
+        localStorage.setItem("history", JSON.stringify(searchHistory));
+        loadHistory();
+    } else {
+        searchHistory.splice(searchHistory.indexOf(city), 1);
+        searchHistory.unshift(city);
+        localStorage.setItem("history", JSON.stringify(searchHistory));
+        loadHistory();
     }
-    searchHistory.splice(searchHistory.indexOf(city), 1);
-    searchHistory.unshift(city);
-    localStorage.setItem("history", JSON.stringify(searchHistory));
-    loadHistory();
 };
 
 let loadHistory = () => {
@@ -143,6 +150,7 @@ searchBtn.click(e => {
     // console.log(searchInput.val());
     var city = searchInput.val().replace(" ", "+");
     fetchCoords(city);
+    handleHistory(city.replace("+", " "));
     searchInput.val("");
 });
 
