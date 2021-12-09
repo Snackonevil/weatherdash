@@ -20,11 +20,17 @@ const clearBtn = $("#clearBtn");
 // Global Variables
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "19f6c11012fcd19bbfc2f0188a37308e";
-var searchHistory = ["atlanta", "san diego", "virginia beach"];
+// var searchHistory = ["atlanta", "san diego", "virginia beach"];
 
 let handleHistory = city => {
     var searchHistory = JSON.parse(localStorage.getItem("history"));
-    console.log(searchHistory.indexOf(city));
+    if (searchHistory == null) {
+        return;
+    }
+    searchHistory.splice(searchHistory.indexOf(city), 1);
+    searchHistory.unshift(city);
+    localStorage.setItem("history", JSON.stringify(searchHistory));
+    loadHistory();
 };
 
 let loadHistory = () => {
