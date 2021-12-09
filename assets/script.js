@@ -8,33 +8,55 @@
 
 // Icon Source http://openweathermap.org/img/wn/10d@2x.png
 
+// Selectors
 var searchInput = $("#searchInput");
 const searchBtn = $("#searchBtn");
 const mainContent = $("#mainContent");
 var recentSearches = $("#recents");
 const current = $("#current");
 const fiveDay = $("#five-day");
+const clearBtn = $("#clearBtn");
 
+// Global Variables
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "19f6c11012fcd19bbfc2f0188a37308e";
+var searchHistory = ["atlanta", "san diego", "virginia beach"];
+
+let loadHistory = () => {
+    var searchHistory = JSON.parse(localStorage.getItem("history"));
+    if (searchHistory == null) {
+        return;
+    }
+    var output = "";
+    searchHistory.forEach(i => {
+        output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
+    });
+    recentSearches.html(output);
+    renderRecent(searchHistory[0]);
+};
+
+let renderRecent = recent => {
+    fetchCoords(recent);
+};
 
 let writeData = data => {
-    var currTemp = data.current;
-    console.log(currTemp);
+    var curr = data.current;
+    console.log(curr);
     current.html(`
-    <h3>Temperature: ${Math.floor(currTemp.temp)} | Feels like: ${Math.floor(
-        currTemp.feels_like
+    <h3>Temperature: ${Math.floor(curr.temp)} | Feels like: ${Math.floor(
+        curr.feels_like
     )}</h3>
     <h3>${
-        currTemp.weather[0].description
+        curr.weather[0].description
     }</h3> <img src="http://openweathermap.org/img/wn/${
-        currTemp.weather[0].icon
+        curr.weather[0].icon
     }@4x.png" />`);
 
     var output = "";
-    for (let i = 0; i < 5; i++) {
+    for (let i = 1; i < 6; i++) {
         var day = data.daily;
         var temp = Math.floor(day[i].temp.max);
+        // Reformat date from Unix
         var weatherInfo = day[i].weather[0];
         var unixMillisec = day[i].dt * 1000;
         var dateObject = new Date(unixMillisec);
@@ -44,14 +66,14 @@ let writeData = data => {
             day: "numeric",
         });
 
-        output += `<div class="col-12 p-1 m-1 border rounded"><h4>${date}</h4>${temp}<img src="http://openweathermap.org/img/wn/${weatherInfo.icon}.png" /><p>${weatherInfo.description}</div>`;
+        output += `<div class="col p-3 m-1 border rounded text-center">${date}<img src="http://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png"/><h4>${temp}</h4><p>${weatherInfo.description}</p></div>`;
         console.log(day[i].temp.max);
     }
     fiveDay.html(output);
     console.log(data);
 };
 {
-    /* <img src="http://openweathermap.org/img/wn/${currTemp.weather[0].icon}.png /> */
+    /* <img src="http://openweathermap.org/img/wn/${curr.weather[0].icon}.png /> */
 }
 // let fetchFromZip = (zip) => {
 //   fetch(`${apiRootUrl}geo/1.0/zip?zip=${zip}&appid=${apiKey}`)
@@ -91,6 +113,9 @@ let fetchCoords = city => {
         })
         .then(data => {
             console.log(data);
+            $("#mainContent section h1").text(
+                `Today in ${data.city.name}, ${data.city.country}`
+            );
             fetchWeather(data.city.coord);
         })
         .catch(err => {
@@ -99,6 +124,9 @@ let fetchCoords = city => {
 };
 
 searchBtn.click(e => {
+    if (searchInput.val() === "") {
+        return;
+    }
     e.preventDefault();
     //   console.log(typeof searchInput.val());
     //   if (typeof searchInput.val() == "number") {
@@ -108,8 +136,22 @@ searchBtn.click(e => {
     // console.log(searchInput.val());
     var city = searchInput.val().replace(" ", "+");
     fetchCoords(city);
+    searchInput.val("");
 });
 
+recentSearches.click(e => {
+    fetchCoords($(e.target).text());
+    // city = e.target.val()
+    // fetchCoords(e.target.text());
+});
+
+clearBtn.click(e => {
+    e.preventDefault();
+    localStorage.clear();
+    loadHistory();
+});
+
+loadHistory();
 // dateObject.toLocaleString("en-US", {weekday: "long", month: "long", day: "numeric"}) // Monday
 // dateObject.toLocaleString("en-US", {month: "long"}) // December
 // dateObject.toLocaleString("en-US", {day: "numeric"}) // 9
