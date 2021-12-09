@@ -22,6 +22,11 @@ const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "19f6c11012fcd19bbfc2f0188a37308e";
 var searchHistory = ["atlanta", "san diego", "virginia beach"];
 
+let handleHistory = city => {
+    var searchHistory = JSON.parse(localStorage.getItem("history"));
+    console.log(searchHistory.indexOf(city));
+};
+
 let loadHistory = () => {
     var searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
@@ -32,11 +37,7 @@ let loadHistory = () => {
         output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
     });
     recentSearches.html(output);
-    renderRecent(searchHistory[0]);
-};
-
-let renderRecent = recent => {
-    fetchCoords(recent);
+    fetchCoords(searchHistory[0]);
 };
 
 let writeData = data => {
@@ -140,7 +141,8 @@ searchBtn.click(e => {
 });
 
 recentSearches.click(e => {
-    fetchCoords($(e.target).text());
+    handleHistory($(e.target).text());
+    // fetchCoords($(e.target).text());
     // city = e.target.val()
     // fetchCoords(e.target.text());
 });
