@@ -1,13 +1,14 @@
 // Selectors
-var searchInput = $("#searchInput");
-const searchBtn = $("#searchBtn");
-const mainContent = $("#mainContent");
-var recentSearches = $("#recents");
-const current = $("#current");
-const fiveDay = $("#five-day");
-const clearBtn = $("#clearBtn");
+var searchInput = $('#searchInput');
+const searchBtn = $('#searchBtn');
+const mainContent = $('#mainContent');
+var recentSearches = $('#recents');
+const current = $('#current');
+const fiveDay = $('#five-day');
+const clearBtn = $('#clearBtn');
 
 // Global Variables
+<<<<<<< HEAD
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "9eae40a4431a1836c424f06650dd3e9d";
 
@@ -26,8 +27,35 @@ function handleHistory(city) {
     localStorage.setItem("history", JSON.stringify(searchHistory));
     loadHistory();
 }
+=======
+const apiRootUrl = 'https://api.openweathermap.org/';
+const apiKey = '9eae40a4431a1836c424f06650dd3e9d';
+var searchHistory = [];
+// 9eae40a4431a1836c424f06650dd3e9d
+// "655d8562d037c93897e1a3c13e7c403b"
 
+let handleHistory = city => {
+  var searchHistory = JSON.parse(localStorage.getItem('history'));
+  if (searchHistory == null) {
+    searchHistory = [city]; // if no previous history
+    console.log('New history');
+  } else if (searchHistory.indexOf(city) === -1) {
+    searchHistory.unshift(city); // if city has not yet been searched
+    console.log('New city...');
+  } else {
+    searchHistory.splice(searchHistory.indexOf(city), 1);
+    searchHistory.unshift(city); // if city has been searched, put at 0 index
+    console.log('Previous city');
+  }
+  localStorage.setItem('history', JSON.stringify(searchHistory)); // reset updated history
+  loadHistory();
+  console.log('loading history...');
+};
+>>>>>>> 4cd617bde8525a1219dd72e10f8818182aa88351
+
+// Render history in dropdown
 let loadHistory = () => {
+<<<<<<< HEAD
     var searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
         return;
@@ -37,20 +65,39 @@ let loadHistory = () => {
         output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
     });
     recentSearches.html(output);
+=======
+  var searchHistory = JSON.parse(localStorage.getItem('history'));
+  if (searchHistory == null) {
+    return;
+  }
+  var output = '';
+  searchHistory.forEach(i => {
+    output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
+  });
+  recentSearches.html(output);
+>>>>>>> 4cd617bde8525a1219dd72e10f8818182aa88351
 };
 
+// Render weather forecast card
 let writeData = data => {
+<<<<<<< HEAD
     var curr = data.current;
     current.html(`
+=======
+  var curr = data.current;
+  // Render current weather
+  current.html(`
+>>>>>>> 4cd617bde8525a1219dd72e10f8818182aa88351
     <h3>Temperature: ${Math.floor(curr.temp)} | Feels like: ${Math.floor(
-        curr.feels_like
-    )}</h3>
+    curr.feels_like
+  )}</h3>
     <h3>${
-        curr.weather[0].description
+      curr.weather[0].description
     }</h3> <img src="http://openweathermap.org/img/wn/${
-        curr.weather[0].icon
-    }@4x.png" />`);
+    curr.weather[0].icon
+  }@4x.png" />`);
 
+<<<<<<< HEAD
     var output = "";
     for (let i = 1; i < 6; i++) {
         var day = data.daily;
@@ -73,10 +120,31 @@ let writeData = data => {
         console.log(day[i].temp.max);
     }
     fiveDay.html(output);
+=======
+  // Render five-day forecast
+  var output = '';
+  for (let i = 1; i < 6; i++) {
+    var day = data.daily;
+    var temp = Math.floor(day[i].temp.max);
+    // Reformat date from Unix
+    var weatherInfo = day[i].weather[0];
+    var unixMillisec = day[i].dt * 1000;
+    var dateObject = new Date(unixMillisec);
+    var date = dateObject.toLocaleString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+    });
+    output += `<div class="col p-3 m-1 border rounded text-center">${date}<img src="http://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png"/><h4>${temp}</h4><p>${weatherInfo.description}</p></div>`;
+  }
+  fiveDay.html(output);
+  console.log('weather loaded');
+>>>>>>> 4cd617bde8525a1219dd72e10f8818182aa88351
 };
 
 // OneCall Weather
 let fetchWeather = coordObj => {
+<<<<<<< HEAD
     fetch(
         `${apiRootUrl}data/2.5/onecall?lat=${coordObj.lat}&lon=${coordObj.lon}&exclude=hourly,minutely&units=imperial&appid=${apiKey}`
     )
@@ -89,10 +157,28 @@ let fetchWeather = coordObj => {
         .catch(err => {
             console.log(err);
         });
+=======
+  fetch(
+    `${apiRootUrl}data/2.5/onecall?lat=${coordObj.lat}&lon=${coordObj.lon}&exclude=hourly,minutely&units=imperial&appid=${apiKey}`
+  )
+    .then(response => {
+      // if (!response.ok) {
+      //     return;
+      // }
+      return response.json();
+    })
+    .then(data => {
+      writeData(data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+>>>>>>> 4cd617bde8525a1219dd72e10f8818182aa88351
 };
 
 // Geocode
 let fetchCoords = city => {
+<<<<<<< HEAD
     fetch(`${apiRootUrl}data/2.5/forecast?q=${city}&appid=${apiKey}`)
         .then(response => {
             if (response.status === 404) {
@@ -111,28 +197,74 @@ let fetchCoords = city => {
         .catch(err => {
             console.log(err);
         });
+=======
+  fetch(`${apiRootUrl}data/2.5/forecast?q=${city}&appid=${apiKey}`)
+    .then(response => {
+      if (response.status === 404) {
+        $('#mainContent section h1').text(`${city} not found`);
+        return;
+      }
+      // } else if (response.status === 429) {
+      //     $("#mainContent section h1").text(
+      //         "Too many API requests. Please Wait"
+      //     );
+      // }
+      return response.json();
+    })
+    .then(data => {
+      // console.log(data);
+      $('#mainContent section h1').text(
+        `Today in ${data.city.name}, ${data.city.country}`
+      );
+      fetchWeather(data.city.coord); // fetch weather with coordinates
+      handleHistory(city.replace('+', ' ')); // process city name into history
+    })
+    .catch(err => {
+      console.log(err);
+    });
+>>>>>>> 4cd617bde8525a1219dd72e10f8818182aa88351
 };
 
+// Load page based on history
+let pageLoad = () => {
+  var searchHistory = JSON.parse(localStorage.getItem('history'));
+  if (searchHistory == null) {
+    return;
+  }
+  var output = '';
+  searchHistory.forEach(i => {
+    output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
+  });
+  recentSearches.html(output);
+  fetchCoords(searchHistory[0]);
+};
+
+//Events
+
+// Search for user input
 searchBtn.click(e => {
-    if (searchInput.val() === "") {
-        return;
-    }
-    e.preventDefault();
-    var city = searchInput.val().replace(" ", "+");
-    fetchCoords(city);
-    searchInput.val("");
+  if (searchInput.val() === '') {
+    return;
+  }
+  e.preventDefault();
+  var city = searchInput.val().replace(' ', '+');
+  fetchCoords(city);
+  searchInput.val(''); // Empty input field
 });
 
+// Recall city from history dropdown
 recentSearches.click(e => {
-    fetchCoords($(e.target).text());
+  fetchCoords($(e.target).text());
 });
 
+// Clear 'history' key from storage
 clearBtn.click(e => {
-    e.preventDefault();
-    localStorage.clear();
-    loadHistory();
+  e.preventDefault();
+  localStorage.removeItem('history');
+  loadHistory();
 });
 
+<<<<<<< HEAD
 let pageLoad = () => {
     var searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
@@ -146,4 +278,6 @@ let pageLoad = () => {
     fetchCoords(searchHistory[0]);
 };
 
+=======
+>>>>>>> 4cd617bde8525a1219dd72e10f8818182aa88351
 pageLoad();
