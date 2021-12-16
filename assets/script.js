@@ -8,6 +8,7 @@ const fiveDay = $("#five-day");
 const clearBtn = $("#clearBtn");
 
 // Global Variables
+
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "9eae40a4431a1836c424f06650dd3e9d";
 
