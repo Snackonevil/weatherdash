@@ -120,10 +120,10 @@ let fetchCoords = city => {
 
 // Search for user input
 searchBtn.click(e => {
+    e.preventDefault();
     if (searchInput.val() === "") {
         return;
     }
-    e.preventDefault();
     var city = searchInput.val().replace(" ", "+");
     fetchCoords(city);
     searchInput.val(""); // Empty input field
