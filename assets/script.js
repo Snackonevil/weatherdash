@@ -159,6 +159,7 @@ let pageLoad = () => {
     defaultCity();
     var searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
+        return;
     } else {
         var output = "";
         searchHistory.forEach(i => {
