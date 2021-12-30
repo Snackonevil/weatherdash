@@ -89,6 +89,7 @@ let fetchWeather = coordObj => {
         })
         .then(data => {
             writeData(data);
+            console.log(data);
         })
         .catch(err => {
             console.log(err);
@@ -142,17 +143,29 @@ clearBtn.click(e => {
     loadHistory();
 });
 
+let defaultCity = () => {
+    navigator.geolocation.getCurrentPosition(position => {
+        const { latitude, longitude } = position.coords;
+        let coordObj = {
+            lat: latitude,
+            lon: longitude,
+        };
+        fetchWeather(coordObj);
+    });
+};
+
 let pageLoad = () => {
+    defaultCity();
     var searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
-        return;
+    } else {
+        var output = "";
+        searchHistory.forEach(i => {
+            output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
+        });
+        recentSearches.html(output);
+        // fetchCoords(searchHistory[0]);
     }
-    var output = "";
-    searchHistory.forEach(i => {
-        output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
-    });
-    recentSearches.html(output);
-    fetchCoords(searchHistory[0]);
 };
 
 pageLoad();
