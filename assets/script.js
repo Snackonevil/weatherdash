@@ -51,7 +51,7 @@ let writeData = data => {
     )}</h3>
     <h3>${
         curr.weather[0].description
-    }</h3> <img src="http://openweathermap.org/img/wn/${
+    }</h3> <img src="https://openweathermap.org/img/wn/${
         curr.weather[0].icon
     }@4x.png" />`);
 
@@ -71,7 +71,7 @@ let writeData = data => {
         });
 
         output += `<div class="col p-3 m-1 border rounded text-center">${date}
-            <img src="http://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png"/>
+            <img src="https://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png"/>
             <h4>${temp}</h4>
             <p>${weatherInfo.description}</p>
         </div>`;
