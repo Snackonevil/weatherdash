@@ -143,6 +143,7 @@ clearBtn.click(e => {
     loadHistory();
 });
 
+//Navigator API to use device location
 let defaultCity = () => {
     navigator.geolocation.getCurrentPosition(position => {
         const { latitude, longitude } = position.coords;
