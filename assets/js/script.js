@@ -45,16 +45,29 @@ let loadHistory = () => {
 let writeData = data => {
     // Current weather
     var curr = data.current;
+    var uvColor = "";
+    if (curr.uvi < 3) {
+        uvColor = "success";
+    } else if (curr.uvi >= 3 && curr.uvi <= 5) {
+        uvColor = "warning";
+    } else {
+        uvColor = "danger";
+    }
     current.html(`
     <h3>Temperature: ${Math.floor(curr.temp)}F | Feels like: ${Math.floor(
         curr.feels_like
     )}F</h3>
-    <h3>${
-        curr.weather[0].description
-    }</h3> <img src="https://openweathermap.org/img/wn/${
+    <h3>${curr.weather[0].description}</h3> 
+    <div class="row"><img class="col-3"src="https://openweathermap.org/img/wn/${
         curr.weather[0].icon
     }@4x.png" />
-    <h4>${curr.humidity}% humidity</h4>`);
+    <div class="col-3">
+        <h4>${curr.humidity}% humidity</h4>
+        <h4>${Math.floor(curr.wind_speed)} mph winds</h4>
+        <h4>UV Index: <span class="text-${uvColor}">${curr.uvi}
+</span></h4>
+    </div>
+    </div>`);
 
     // Five-day forecast
     var output = "";
@@ -72,10 +85,12 @@ let writeData = data => {
         });
 
         output += `<div class="col p-3 m-1 border rounded text-center">${date}
-            <img src="https://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png"/>
+            <img src="https://openweathermap.org/img/wn/${
+                weatherInfo.icon
+            }@2x.png"/>
             <h4>${temp}F</h4>
             <h5>${day[i].humidity}% Humidity</h5>
-            <h5>${day[i].wind_speed} mph winds</h5>
+            <h5>${Math.floor(day[i].wind_speed)} mph winds</h5>
             <p>${weatherInfo.description}</p>
         </div>`;
     }
@@ -104,15 +119,19 @@ let fetchCoords = city => {
     fetch(`${apiRootUrl}data/2.5/forecast?q=${city}&appid=${apiKey}`)
         .then(response => {
             if (response.status === 404) {
-                $("#mainContent section h1").text(`${city} not found`);
+                $("#mainContent section h1").text(`"${city}" not found`);
+                $("#mainContent div h1").text("please enter city");
+                $("#current").html("");
+                $("#five-day").html("");
                 return;
             }
             return response.json();
         })
         .then(data => {
             $("#mainContent section h1").text(
-                `Right now in ${data.city.name}, ${data.city.country}`
+                `Now in ${data.city.name}, ${data.city.country}`
             );
+            $("#mainContent div h1").text("5-Day Forecast");
             fetchWeather(data.city.coord);
             handleHistory(city.replace("+", " "));
         })
