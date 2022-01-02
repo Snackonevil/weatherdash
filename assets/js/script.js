@@ -107,7 +107,6 @@ let fetchWeather = coordObj => {
         })
         .then(data => {
             writeData(data);
-            // console.log(data);
         })
         .catch(err => {
             console.log(err);
