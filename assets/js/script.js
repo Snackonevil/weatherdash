@@ -46,14 +46,15 @@ let writeData = data => {
     // Current weather
     var curr = data.current;
     current.html(`
-    <h3>Temperature: ${Math.floor(curr.temp)} | Feels like: ${Math.floor(
+    <h3>Temperature: ${Math.floor(curr.temp)}F | Feels like: ${Math.floor(
         curr.feels_like
-    )}</h3>
+    )}F</h3>
     <h3>${
         curr.weather[0].description
     }</h3> <img src="https://openweathermap.org/img/wn/${
         curr.weather[0].icon
-    }@4x.png" />`);
+    }@4x.png" />
+    <h4>${curr.humidity}% humidity</h4>`);
 
     // Five-day forecast
     var output = "";
@@ -72,7 +73,9 @@ let writeData = data => {
 
         output += `<div class="col p-3 m-1 border rounded text-center">${date}
             <img src="https://openweathermap.org/img/wn/${weatherInfo.icon}@2x.png"/>
-            <h4>${temp}</h4>
+            <h4>${temp}F</h4>
+            <h5>${day[i].humidity}% Humidity</h5>
+            <h5>${day[i].wind_speed} mph winds</h5>
             <p>${weatherInfo.description}</p>
         </div>`;
     }
@@ -108,7 +111,7 @@ let fetchCoords = city => {
         })
         .then(data => {
             $("#mainContent section h1").text(
-                `Today in ${data.city.name}, ${data.city.country}`
+                `Right now in ${data.city.name}, ${data.city.country}`
             );
             fetchWeather(data.city.coord);
             handleHistory(city.replace("+", " "));
@@ -140,7 +143,7 @@ recentSearches.click(e => {
 clearBtn.click(e => {
     e.preventDefault();
     localStorage.removeItem("history");
-    loadHistory();
+    window.location.reload();
 });
 
 //Navigator API to use device location
