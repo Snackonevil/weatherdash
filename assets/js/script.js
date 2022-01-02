@@ -57,15 +57,15 @@ let writeData = data => {
     <h3>Temperature: ${Math.floor(curr.temp)}F | Feels like: ${Math.floor(
         curr.feels_like
     )}F</h3>
-    <h3>${curr.weather[0].description}</h3> 
-    <div class="row"><img class="col-3"src="https://openweathermap.org/img/wn/${
+    <div class="row"><img class="col-md-3 col-sm-12"src="https://openweathermap.org/img/wn/${
         curr.weather[0].icon
     }@4x.png" />
-    <div class="col-3">
+    <div class="col-md-3 col-sm-12 p-5">
         <h4>${curr.humidity}% humidity</h4>
         <h4>${Math.floor(curr.wind_speed)} mph winds</h4>
         <h4>UV Index: <span class="text-${uvColor}">${curr.uvi}
 </span></h4>
+<h3>${curr.weather[0].description}</h3> 
     </div>
     </div>`);
 
@@ -84,7 +84,7 @@ let writeData = data => {
             day: "numeric",
         });
 
-        output += `<div class="col p-3 m-1 border rounded text-center">${date}
+        output += `<div class="col-lg col-md-12 col-sm-12 p-3 m-1 border rounded text-center">${date}
             <img src="https://openweathermap.org/img/wn/${
                 weatherInfo.icon
             }@2x.png"/>
