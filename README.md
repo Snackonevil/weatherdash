@@ -4,32 +4,36 @@
 
 by Kevin Lacson  
 Email: lacsonky@gmail.com  
-GitHub: [Snackonevil](https://github.com/Snackonevil)  
+GitHub: [Snackonevil](https://github.com/Snackonevil)
 
 ---
-## Description  
+
+## Description
+
 Single-page, client application that displays weather by city using the [OpenWeather API](https://openweathermap.org/)
 
-Deployed: [https://snackonevil.github.io/weatherdash/](https://snackonevil.github.io/weatherdash/)  
-Repository: [https://github.com/Snackonevil/weatherdash](https://github.com/Snackonevil/weatherdash)
+[CODE](https://github.com/Snackonevil/weatherdash) | [APP](https://snackonevil.github.io/weatherdash/)
 
 ---
+
 ## Table of Contents
 
 -   [Usage](#usage)
 -   [License](#license)
 
 ---
+
 ## Usage
 
-1. Search your area by city  
-2. See current forecast and the coming 5 days  
-3. Saves your history searches  
+1. Search your area by city
+2. See current forecast and the coming 5 days
+3. Saves your history searches
 4. Defaults to device location
 
 ![weather-dash-screenshot](./assets/images/screenshot-dash.PNG)
 
 ---
+
 ## License
 
 (MIT)
