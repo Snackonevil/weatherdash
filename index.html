@@ -14,6 +14,7 @@
                 <div class="container">
                     <a class="navbar-brand">Weather Dashboard</a>
                     <form class="d-flex">
+                        <!-- Input field -->
                         <input
                             id="searchInput"
                             class="form-control me-2"
@@ -28,6 +29,8 @@
                             Search
                         </button>
                     </form>
+
+                    <!-- Dropdown menu of history -->
                     <div class="dropdown">
                         <button
                             class="btn btn-light dropdown-toggle"
@@ -59,25 +62,31 @@
             id="mainContent"
             class="container rounded m-auto my-5 p-4 bg-secondary"
         >
+            <!-- Current weather section -->
             <section class="border-bottom">
                 <h1 class="display-1">Now</h1>
                 <div id="current" class="container"></div>
             </section>
+
             <div class="container">
                 <h1 class="py-3">5-Day Forecast</h1>
             </div>
+
+            <!-- Five-day weather section -->
             <section
                 id="five-day"
                 class="container row justify-content-center"
             ></section>
         </main>
 
+        <!-- CDN for Bootstrap's JS -->
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
             crossorigin="anonymous"
         ></script>
 
+        <!-- CDN for JQuery -->
         <script
             src="https://code.jquery.com/jquery-3.6.0.js"
             integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="

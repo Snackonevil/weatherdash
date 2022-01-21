@@ -8,18 +8,21 @@ const fiveDay = $("#five-day");
 const clearBtn = $("#clearBtn");
 
 // Global Variables
-
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "9eae40a4431a1836c424f06650dd3e9d";
 
+// Pulls history from local storage
+
 function handleHistory(city) {
     var searchHistory = JSON.parse(localStorage.getItem("history"));
-
+    // if empty, adds city,
     if (searchHistory == null) {
         searchHistory = [city];
+        // if not searched before, adds to front
     } else if (searchHistory.indexOf(city) === -1) {
         searchHistory.unshift(city);
     } else {
+        // if searched before, removes from current index and adds it to front of list to be retrieved first,
         searchHistory.splice(searchHistory.indexOf(city), 1);
         searchHistory.unshift(city);
     }
@@ -28,7 +31,7 @@ function handleHistory(city) {
     loadHistory();
 }
 
-// Render history in dropdown
+// Render history in dropdown menu
 let loadHistory = () => {
     var searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
@@ -53,6 +56,7 @@ let writeData = data => {
     } else {
         uvColor = "danger";
     }
+    // Today's forecast populated with data using string interolation
     current.html(`
     <h3>Temperature: ${Math.floor(curr.temp)}F | Feels like: ${Math.floor(
         curr.feels_like
@@ -69,8 +73,10 @@ let writeData = data => {
     </div>
     </div>`);
 
-    // Five-day forecast
+    // Five-day forecast; generate HTML cards
+    // Init variable to hold HTML
     var output = "";
+    // Iterate through 5 days
     for (let i = 1; i < 6; i++) {
         var day = data.daily;
         var temp = Math.floor(day[i].temp.max);
@@ -83,7 +89,7 @@ let writeData = data => {
             month: "long",
             day: "numeric",
         });
-
+        // Five-day markup appended to output variable
         output += `<div class="col-lg col-md-12 col-sm-12 p-3 m-1 border rounded text-center">${date}
             <img src="https://openweathermap.org/img/wn/${
                 weatherInfo.icon
@@ -94,10 +100,11 @@ let writeData = data => {
             <p>${weatherInfo.description}</p>
         </div>`;
     }
+    // Render HTML
     fiveDay.html(output);
 };
 
-// OneCall Weather
+// OneCall Weather API fetch by Coordinates
 let fetchWeather = coordObj => {
     fetch(
         `${apiRootUrl}data/2.5/onecall?lat=${coordObj.lat}&lon=${coordObj.lon}&exclude=hourly,minutely&units=imperial&appid=${apiKey}`
@@ -113,7 +120,7 @@ let fetchWeather = coordObj => {
         });
 };
 
-// Geocode
+// Geocode: OneCall Weather API fetch by city to retrieve city coordinates
 let fetchCoords = city => {
     fetch(`${apiRootUrl}data/2.5/forecast?q=${city}&appid=${apiKey}`)
         .then(response => {
@@ -139,7 +146,7 @@ let fetchCoords = city => {
         });
 };
 
-//Events
+// Events
 
 // Search for user input
 searchBtn.click(e => {
@@ -164,7 +171,7 @@ clearBtn.click(e => {
     window.location.reload();
 });
 
-//Navigator API to use device location
+// Navigator API to use device location
 let defaultCity = () => {
     navigator.geolocation.getCurrentPosition(position => {
         const { latitude, longitude } = position.coords;
@@ -176,6 +183,7 @@ let defaultCity = () => {
     });
 };
 
+// Populate page with weather from device location and retrieves history
 let pageLoad = () => {
     defaultCity();
     var searchHistory = JSON.parse(localStorage.getItem("history"));
@@ -191,4 +199,5 @@ let pageLoad = () => {
     }
 };
 
+// Initilize on load
 pageLoad();
