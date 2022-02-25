@@ -1,20 +1,19 @@
 // Selectors
-var searchInput = $("#searchInput");
+let searchInput = $("#searchInput");
 const searchBtn = $("#searchBtn");
 const mainContent = $("#mainContent");
-var recentSearches = $("#recents");
+let recentSearches = $("#recents");
 const current = $("#current");
 const fiveDay = $("#five-day");
 const clearBtn = $("#clearBtn");
 
-// Global Variables
+// Global variables
 const apiRootUrl = "https://api.openweathermap.org/";
 const apiKey = "9eae40a4431a1836c424f06650dd3e9d";
 
 // Pulls history from local storage
-
-function handleHistory(city) {
-    var searchHistory = JSON.parse(localStorage.getItem("history"));
+const handleHistory = city => {
+    let searchHistory = JSON.parse(localStorage.getItem("history"));
     // if empty, adds city,
     if (searchHistory == null) {
         searchHistory = [city];
@@ -29,26 +28,28 @@ function handleHistory(city) {
 
     localStorage.setItem("history", JSON.stringify(searchHistory));
     loadHistory();
-}
+};
 
 // Render history in dropdown menu
-let loadHistory = () => {
-    var searchHistory = JSON.parse(localStorage.getItem("history"));
+const loadHistory = () => {
+    let searchHistory = JSON.parse(localStorage.getItem("history"));
     if (searchHistory == null) {
         return;
     }
-    var output = "";
+    let output = "";
     searchHistory.forEach(i => {
         output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
     });
     recentSearches.html(output);
 };
 
-// Render weather forecast cards
-let writeData = data => {
+// Render weather forecast cards to DOM
+const writeData = data => {
     // Current weather
-    var curr = data.current;
-    var uvColor = "";
+    let curr = data.current;
+
+    // Assign UV index a color class
+    let uvColor = "";
     if (curr.uvi < 3) {
         uvColor = "success";
     } else if (curr.uvi >= 3 && curr.uvi <= 5) {
@@ -56,7 +57,7 @@ let writeData = data => {
     } else {
         uvColor = "danger";
     }
-    // Today's forecast populated with data using string interolation
+    // Populate today's forecast with data using string interolation
     current.html(`
     <h3>Temperature: ${Math.floor(curr.temp)}F | Feels like: ${Math.floor(
         curr.feels_like
@@ -75,16 +76,16 @@ let writeData = data => {
 
     // Five-day forecast; generate HTML cards
     // Init variable to hold HTML
-    var output = "";
+    let output = "";
     // Iterate through 5 days
     for (let i = 1; i < 6; i++) {
-        var day = data.daily;
-        var temp = Math.floor(day[i].temp.max);
+        let day = data.daily;
+        let temp = Math.floor(day[i].temp.max);
         // Reformat date from Unix
-        var weatherInfo = day[i].weather[0];
-        var unixMillisec = day[i].dt * 1000;
-        var dateObject = new Date(unixMillisec);
-        var date = dateObject.toLocaleString("en-US", {
+        let weatherInfo = day[i].weather[0];
+        let unixMillisec = day[i].dt * 1000;
+        let dateObject = new Date(unixMillisec);
+        let date = dateObject.toLocaleString("en-US", {
             weekday: "long",
             month: "long",
             day: "numeric",
@@ -105,48 +106,55 @@ let writeData = data => {
 };
 
 // OneCall Weather API fetch by Coordinates
-let fetchWeather = coordObj => {
-    fetch(
-        `${apiRootUrl}data/2.5/onecall?lat=${coordObj.lat}&lon=${coordObj.lon}&exclude=hourly,minutely&units=imperial&appid=${apiKey}`
-    )
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            writeData(data);
-        })
-        .catch(err => {
-            console.log(err);
-        });
+const fetchWeather = async coordObj => {
+    const url = `${apiRootUrl}data/2.5/onecall?lat=${coordObj.lat}&lon=${coordObj.lon}&exclude=hourly,minutely&units=imperial&appid=${apiKey}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        writeData(data);
+    } catch (err) {
+        console.log(err);
+    }
 };
 
 // Geocode: OneCall Weather API fetch by city to retrieve city coordinates
-let fetchCoords = city => {
-    fetch(`${apiRootUrl}data/2.5/forecast?q=${city}&appid=${apiKey}`)
-        .then(response => {
-            if (response.status === 404) {
-                $("#mainContent section h1").text(`"${city}" not found`);
-                $("#mainContent div h1").text("please enter city");
-                $("#current").html("");
-                $("#five-day").html("");
-                return;
-            }
-            return response.json();
-        })
-        .then(data => {
+const fetchCoords = async city => {
+    const url = `${apiRootUrl}data/2.5/forecast?q=${city}&appid=${apiKey}`;
+    try {
+        const response = await fetch(url);
+        if (response.status === 404) {
+            $("#mainContent section h1").text(`"${city}" not found`);
+            $("#mainContent div h1").text("please enter city");
+            $("#current").html("");
+            $("#five-day").html("");
+            return;
+        } else {
+            const { city } = await response.json();
             $("#mainContent section h1").text(
-                `Now in ${data.city.name}, ${data.city.country}`
+                `Now in ${city.name}, ${city.country}`
             );
             $("#mainContent div h1").text("5-Day Forecast");
-            fetchWeather(data.city.coord);
-            handleHistory(city.replace("+", " "));
-        })
-        .catch(err => {
-            console.log(err);
-        });
+            fetchWeather(city.coord);
+            handleHistory(city.name.replace("+", " "));
+        }
+    } catch (err) {
+        console.log(err);
+    }
 };
 
-// Events
+// Navigator API to use device location
+const loadDefaultCity = () => {
+    navigator.geolocation.getCurrentPosition(position => {
+        const { latitude, longitude } = position.coords;
+        const coordObj = {
+            lat: latitude,
+            lon: longitude,
+        };
+        fetchWeather(coordObj);
+    });
+};
+
+// Event listeners
 
 // Search for user input
 searchBtn.click(e => {
@@ -154,14 +162,15 @@ searchBtn.click(e => {
     if (searchInput.val() === "") {
         return;
     }
-    var city = searchInput.val().replace(" ", "+");
+    const city = searchInput.val().replace(" ", "+");
     fetchCoords(city);
     searchInput.val(""); // Empty input field
 });
 
 // Recall city from history dropdown
 recentSearches.click(e => {
-    fetchCoords($(e.target).text());
+    const city = $(e.target).text();
+    fetchCoords(city);
 });
 
 // Clear 'history' key from storage
@@ -171,33 +180,6 @@ clearBtn.click(e => {
     window.location.reload();
 });
 
-// Navigator API to use device location
-let defaultCity = () => {
-    navigator.geolocation.getCurrentPosition(position => {
-        const { latitude, longitude } = position.coords;
-        let coordObj = {
-            lat: latitude,
-            lon: longitude,
-        };
-        fetchWeather(coordObj);
-    });
-};
-
-// Populate page with weather from device location and retrieves history
-let pageLoad = () => {
-    defaultCity();
-    var searchHistory = JSON.parse(localStorage.getItem("history"));
-    if (searchHistory == null) {
-        return;
-    } else {
-        var output = "";
-        searchHistory.forEach(i => {
-            output += `<li><a class="dropdown-item" href="#">${i}</a></li>`;
-        });
-        recentSearches.html(output);
-        // fetchCoords(searchHistory[0]);
-    }
-};
-
-// Initilize on load
-pageLoad();
+// Initialize on load
+loadDefaultCity();
+loadHistory();
