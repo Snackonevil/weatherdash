@@ -14,6 +14,8 @@ Single-page, client application that displays weather by city using the [OpenWea
 
 [CODE](https://github.com/Snackonevil/weatherdash) | [APP](https://snackonevil.github.io/weatherdash/)
 
+See React rebuild here: [CODE](https://github.com/Snackonevil/weatherdash-react-rebuild) | [APP](https://snackonevil.github.io/weatherdash-react-rebuild/)
+
 ---
 
 ## Table of Contents
